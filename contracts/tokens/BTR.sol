@@ -198,6 +198,8 @@ interface IcoreBTC {
     function deposit() external payable;
 
     function withdraw(uint) external;
+
+    function balnaceOf(address) external returns (uint256);
 }
 
 interface IrBTC {
@@ -514,19 +516,19 @@ contract BTR is ERC20, Ownable {
         uint256 amountToSwapForBTC = contractBalance - liquidityTokens;
 
         if (amountToSwapForBTC > 0) swapTokensForBTC(amountToSwapForBTC);
-        //todo 应该需修改，重写
-        uint256 ethBalance = address(this).balance;
+        //todo 
+        uint256 btcBalance = IcoreBTC(coreBTC).balnaceOf(address(this));
 
-        uint256 ethForBacking = (ethBalance * tokensForBacking) /
+        uint256 ethForBacking = (btcBalance * tokensForBacking) /
             (totalTokensToSwap - tokensForLiquidity / 2);
 
-        uint256 ethForTeam = (ethBalance * tokensForTeam) /
+        uint256 ethForTeam = (btcBalance * tokensForTeam) /
             (totalTokensToSwap - tokensForLiquidity / 2);
 
-        uint256 ethForrBTCReward = (ethBalance * tokensForrBTCRewards) /
+        uint256 ethForrBTCReward = (btcBalance * tokensForrBTCRewards) /
             (totalTokensToSwap - tokensForLiquidity / 2);
 
-        uint256 ethForLiquidity = ethBalance - 
+        uint256 ethForLiquidity = btcBalance - 
             ethForBacking -
             ethForTeam -
             ethForrBTCReward;
