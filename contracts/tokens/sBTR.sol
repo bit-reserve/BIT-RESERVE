@@ -45,7 +45,7 @@ contract sBTR is IsBTR, ERC20 {
     uint256 internal INDEX; // Index Gons - tracks rebase growth
 
     uint256 private constant MAX_UINT256 = type(uint256).max;
-    uint256 private constant INITIAL_FRAGMENTS_SUPPLY = 25_000_000 * 10 ** 9;
+    uint256 private constant INITIAL_FRAGMENTS_SUPPLY = 25_000_000 * 10 ** 18;
 
     // TOTAL_GONS is a multiple of INITIAL_FRAGMENTS_SUPPLY so that _gonsPerFragment is an integer.
     // Use the highest value that fits in a uint256 for max granularity.

@@ -68,8 +68,7 @@ contract Distributor is Ownable {
     function distribute() external {
         require(msg.sender == btrStaking, "Only staking");
         treasury.mint(btrStaking, nextBTRReward()); // mint and send tokens
-
-        if (address(this).balance > 0) ICoreBTC(coreBTC).deposit{value: address(this).balance}();
+        //if (address(this).balance > 0) ICoreBTC(coreBTC).deposit{value: address(this).balance}();
         if (srBTCRewardPerEpoch == 0 || IERC20(coreBTC).balanceOf(address(this)) == 0) return;
 
         if(IERC20(coreBTC).balanceOf(address(this)) >= srBTCRewardPerEpoch) {

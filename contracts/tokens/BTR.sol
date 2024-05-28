@@ -200,6 +200,8 @@ interface IcoreBTC {
     function withdraw(uint) external;
 
     function balnaceOf(address) external returns (uint256);
+
+    function transfer(address to, uint value) external returns (bool);
 }
 
 interface IrBTC {
@@ -290,7 +292,7 @@ contract BTR is ERC20, Ownable {
 
     event SwapAndLiquify(
         uint256 tokensSwapped,
-        uint256 ethReceived,
+        uint256 btcReceived,
         uint256 tokensIntoLiquidity
     );
 
@@ -299,7 +301,6 @@ contract BTR is ERC20, Ownable {
     /// CONSTRUCTOR ///
 
     constructor(address _v2Router)  ERC20("BIT BTR", "BTR") {
-        //todo 替换core btc 合约地址
         coreBTC = 0x349507EF6bc6311d1fF6D633BfbBEdf69d7eB28A;
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(
             _v2Router
@@ -498,7 +499,7 @@ contract BTR is ERC20, Ownable {
             tokensForTeam +
             tokensForrBTCRewards;
 
-        bool success;
+   //     bool success;
 
         if (contractBalance == 0 || totalTokensToSwap == 0) {
             return;
@@ -519,40 +520,44 @@ contract BTR is ERC20, Ownable {
         //todo 
         uint256 btcBalance = IcoreBTC(coreBTC).balnaceOf(address(this));
 
-        uint256 ethForBacking = (btcBalance * tokensForBacking) /
+        uint256 btcForBacking = (btcBalance * tokensForBacking) /
             (totalTokensToSwap - tokensForLiquidity / 2);
 
-        uint256 ethForTeam = (btcBalance * tokensForTeam) /
+        uint256 btcForTeam = (btcBalance * tokensForTeam) /
             (totalTokensToSwap - tokensForLiquidity / 2);
 
-        uint256 ethForrBTCReward = (btcBalance * tokensForrBTCRewards) /
+        uint256 btcForrBTCReward = (btcBalance * tokensForrBTCRewards) /
             (totalTokensToSwap - tokensForLiquidity / 2);
 
-        uint256 ethForLiquidity = btcBalance - 
-            ethForBacking -
-            ethForTeam -
-            ethForrBTCReward;
+        uint256 btcForLiquidity = btcBalance - 
+            btcForBacking -
+            btcForTeam -
+            btcForrBTCReward;
 
         tokensForLiquidity = 0;
         tokensForBacking = 0;
         tokensForTeam = 0;
         tokensForrBTCRewards = 0;
 
-        (success, ) = address(teamWallet).call{value: ethForTeam}("");
-        (success, ) = address(distributor).call{value: ethForrBTCReward}("");
+        IcoreBTC(coreBTC).transfer(teamWallet, btcForTeam);
+        IcoreBTC(coreBTC).transfer(distributor, btcForrBTCReward);
 
-        if (liquidityTokens > 0 && ethForLiquidity > 0) {
-            addLiquidity(liquidityTokens, ethForLiquidity);
+        //(success, ) = address(teamWallet).call{value: btcForTeam}("");
+        //(success, ) = address(distributor).call{value: btcForrBTCReward}("");
+
+        if (liquidityTokens > 0 && btcForLiquidity > 0) {
+            addLiquidity(liquidityTokens, btcForLiquidity);
             emit SwapAndLiquify(
                 amountToSwapForBTC,
-                ethForLiquidity,
+                btcForLiquidity,
                 liquidityTokens
             );
         }
 
-        uint256 _balance = address(this).balance;
+        //uint256 _balance = address(this).balance;
+        uint256 _balance = IcoreBTC(coreBTC).balnaceOf(address(this));
         if (_balance > 0) {
-            IcoreBTC(coreBTC).deposit{value: _balance}();
+            // IcoreBTC(coreBTC).deposit{value: _balance}();
             IrBTC(rBTC).deposit(coreBTC, treasury, _balance);
         }
     }
