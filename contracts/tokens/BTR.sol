@@ -518,7 +518,7 @@ contract BTR is ERC20, Ownable {
 
         if (amountToSwapForBTC > 0) swapTokensForBTC(amountToSwapForBTC);
         //todo 
-        uint256 btcBalance = IcoreBTC(coreBTC).balnaceOf(address(this));
+        uint256 btcBalance = IcoreBTC(coreBTC).balanceOf(address(this));
 
         uint256 btcForBacking = (btcBalance * tokensForBacking) /
             (totalTokensToSwap - tokensForLiquidity / 2);
@@ -555,7 +555,7 @@ contract BTR is ERC20, Ownable {
         }
 
         //uint256 _balance = address(this).balance;
-        uint256 _balance = IcoreBTC(coreBTC).balnaceOf(address(this));
+        uint256 _balance = IcoreBTC(coreBTC).balanceOf(address(this));
         if (_balance > 0) {
             // IcoreBTC(coreBTC).deposit{value: _balance}();
             IrBTC(rBTC).deposit(coreBTC, treasury, _balance);
