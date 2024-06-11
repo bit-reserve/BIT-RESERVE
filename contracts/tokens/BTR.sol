@@ -199,7 +199,7 @@ interface IcoreBTC {
 
     function withdraw(uint) external;
 
-    function balnaceOf(address) external returns (uint256);
+    function balanceOf(address) external returns (uint256);
 
     function transfer(address to, uint value) external returns (bool);
 }
